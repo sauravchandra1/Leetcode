@@ -24,32 +24,17 @@ public:
 
 class Solution {
 public:
-    unordered_map < Node * , int > vis;
-    unordered_map < Node * , Node * > track;
-    void recur(Node * node, Node * ans, Node * par) {
-
-        ans -> val = node -> val;
-        vis[node] = 1;
-        for (auto it: node -> neighbors) {
-            if (vis[it] == 0) 
-            {
-                Node * temp = new Node(it -> val);
-                track[it] = temp;
-                ans -> neighbors.push_back(temp);
-                recur(it, temp, node);
-            } else if (vis[it] == 1) {
-                Node * temp = track[it];
-                ans -> neighbors.push_back(temp);
+    unordered_map<Node*, Node*> mp;
+    Node* cloneGraph(Node* node) {
+        if (node == NULL) {
+            return NULL;
+        }
+        if (mp.find(node) == mp.end()) {
+            mp[node] = new Node(node->val);
+            for (auto v : node->neighbors) {
+                mp[node]->neighbors.push_back(cloneGraph(v));
             }
         }
-    }
-    Node * cloneGraph(Node * node) {
-        if (node == NULL)
-            return NULL;
-        Node * ans = new Node();
-        track[node] = ans;
-        Node * par = new Node();
-        recur(node, ans, par);
-        return ans;
+        return mp[node];
     }
 };
