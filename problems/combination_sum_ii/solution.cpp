@@ -1,30 +1,24 @@
 class Solution {
 public:
     vector<vector<int>> combinationSum2(vector<int>& candidates, int target) {
-        int len = candidates.size();
+        vector<vector<int>> ans;
+        vector<int> vec;
         sort(candidates.begin(), candidates.end());
-        vector<vector<int>> res;
-        if (len == 0) {
-            return res;
-        }
-        vector<int> tt;
-        function<void(int, int)> dfs = [&](int idx, int target) {
-            if (target == 0) {
-                res.push_back(tt);
-                return;
+        int n = candidates.size();
+        function<void(int, int)> dfs = [&](int idx, int sum) {
+            if (sum == 0) {
+                ans.push_back(vec);
+                return ;
             }
-            if (idx == len) return;
-            for (int i = idx; i < len; i++) {
+            for (int i = idx; i < n; i++) {
+                if (sum < candidates[i]) break;
                 if (i > idx && candidates[i] == candidates[i - 1]) continue;
-                if (candidates[i] > target) {
-                    break;
-                }
-                tt.push_back(candidates[i]);
-                dfs(i + 1, target - candidates[i]);
-                tt.pop_back();
+                vec.push_back(candidates[i]);
+                dfs(i + 1, sum - candidates[i]);
+                vec.pop_back();
             }
         };
         dfs(0, target);
-        return res;
+        return ans;      
     }
 };
