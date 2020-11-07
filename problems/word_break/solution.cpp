@@ -1,26 +1,25 @@
 class Solution {
 public:
     bool wordBreak(string s, vector<string>& wordDict) {
-        int n = s.size();
+        int len = s.size();
         unordered_set<string> ump;
         for (auto v : wordDict) ump.insert(v);
-        vector<int> dp(n, -1);
-        bool ok = false;
+        vector<int> dp(len + 1, -1);
         function<int(int)> dfs = [&](int idx) {
-            if (idx == n) return 1; 
-            int &res = dp[idx];
-            if (res != -1) return res;
-            res = 0;
+            if (idx == len) return 1;
+            auto& ans = dp[idx];
+            if (ans != -1) return ans;
+            ans = 0;
             string str;
-            for (int i = idx; i < n; i++) {
+            for (int i = idx; i < len; i++) {
                 str += s[i];
-                if (ump.find(str) != ump.end()) {
-                    res = dfs(i + 1);
-                    if (res) return res;
-                }
+                if (ump.find(str) != ump.end())
+                    ans = dfs(i + 1);
+                if (ans) break;
             }
-            return res;
+            return ans;
         };
-        return (bool)dfs(0);
+        auto res = dfs(0);
+        return (bool)res;
     }
 };
