@@ -1,26 +1,45 @@
-class MySet {
-    unsigned int set = 0;
-    public:
-        bool insert(char val) {
-            unsigned int mask = 1 << val; 
-            if (mask & set) return true;
-            set |= mask;
-            return false;
-        }
-};
-
 class Solution {
-    public:
-        bool isValidSudoku(vector < vector < char >> & board) {
-            MySet rows[9], columns[9], grid[3][3];
-            for (int i = 0; i < 9; i++)
-                for (int j = 0; j < 9; j++) {
-                    if (board[i][j] == '.') continue;
-                    board[i][j] -= '0';
-                    if (rows[i].insert(board[i][j])) return false;
-                    if (columns[j].insert(board[i][j])) return false;
-                    if (grid[i / 3][j / 3].insert(board[i][j])) return false;
+public:
+    bool isValidSudoku(vector<vector<char>>& board) {
+        set<char> se;
+        const int N = 9;
+        // Row checking
+        for (int i = 0; i < N; i++) {
+            se.clear();
+            for (int j = 0; j < N; j++) {
+                auto ch = board[i][j];
+                if (ch >= '0' && ch <= '9') {
+                    if (se.count(ch) > 0) return false;
+                    se.insert(ch);
                 }
-            return true;
+            }
         }
+        // Column checking
+        for (int j = 0; j < N; j++) {
+            se.clear();
+            for (int i = 0; i < N; i++) {
+                auto ch = board[i][j];
+                if (ch >= '0' && ch <= '9') {
+                    if (se.count(ch) > 0) return false;
+                    se.insert(ch);
+                }
+            }
+        }
+        // Sub-boxes checking
+        for (int br = 0; br < N; br += 3) {
+            for (int bc = 0; bc < N; bc += 3) {
+                se.clear();
+                for (int i = br; i < br + 3; i++) {
+                    for (int j = bc; j < bc + 3; j++) {
+                        auto ch = board[i][j];
+                        if (ch >= '0' && ch <= '9') {
+                            if (se.count(ch) > 0) return false;
+                            se.insert(ch);
+                        }
+                    }
+                }
+            }
+        }
+        return true;
+    }
 };
