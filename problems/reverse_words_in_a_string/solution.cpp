@@ -1,35 +1,19 @@
 class Solution {
 public:
     string reverseWords(string s) {
-        while (s.size() && s.back() == ' ') {
-            s.pop_back();
+        int i = 0;
+        vector<string> vec;
+        while (i < s.size()) {
+            string ans;
+            while (i < s.size() && s[i] != ' ') ans += s[i], i++;
+            i++;
+            if (ans.size() > 0) vec.push_back(ans);
         }
-        function<void(int, int)> rev = [&](int l, int r) {
-            int len = r - l + 1;
-            for (int i = 0; i < len / 2; i++) {
-                swap(s[i + l], s[r - i]);
-            }
-        };
-        rev(0, s.size() - 1);
-        char v;
-        int l;
-        for (int i = 0; i < s.size(); i++) {
-            v = s[i];
-            if (v != ' ') {
-                l = i;
-                while (i + 1 < s.size() && s[i + 1] != ' ') {
-                    i++;
-                }
-                rev(l, i);
-            } else {
-                while (i + 1 < s.size() && s[i + 1] == ' ') {
-                    s.erase(s.begin() + i + 1);
-                }
-            }
+        string ans;
+        for (int i = vec.size() - 1; i >= 0; i--) {
+            ans += vec[i];
+            if (i > 0) ans += ' ';
         }
-        while (s.size() && s.back() == ' ') {
-            s.pop_back();
-        }
-        return s;
+        return ans;
     }
 };
