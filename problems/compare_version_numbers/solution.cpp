@@ -1,24 +1,37 @@
 class Solution {
 public:
     int compareVersion(string version1, string version2) {
-        stringstream ss1(version1), ss2(version2);
-        string s1, s2;
-        while (!ss1.eof() && !ss2.eof()) {
-            getline(ss1, s1, '.');
-            getline(ss2, s2, '.');
-            int i1 = stoi(s1), i2 = stoi(s2);
-            if (i1 > i2) return 1;
-            else if (i1 < i2) return -1;
+        vector<int> vec1, vec2;
+        int num = 0;
+        for (int i = 0; i < version1.size(); i++) {
+            if (version1[i] == '.') {
+                vec1.push_back(num);
+                num = 0;
+                continue;
+            } else {
+                num = num * 10 + (int)(version1[i] - '0');
+            }
         }
-        while (!ss1.eof()) {
-            getline(ss1, s1, '.');
-            int i1 = stoi(s1);
-            if (i1 > 0) return 1;
+        if (num != 0) vec1.push_back(num);
+        num = 0;
+        for (int i = 0; i < version2.size(); i++) {
+            if (version2[i] == '.') {
+                vec2.push_back(num);
+                num = 0;
+                continue;
+            } else {
+                num = num * 10 + (int)(version2[i] - '0');
+            }
         }
-        while (!ss2.eof()) {
-            getline(ss2, s2, '.');
-            int i2 = stoi(s2);
-            if (i2 > 0) return -1;
+        if (num != 0) vec2.push_back(num);
+        int l1 = vec1.size(), l2 = vec2.size();
+        int val1, val2;
+        for (int i = 0; i < max(l1, l2); i++) {
+            val1 = val2 = 0;
+            if (i < l1) val1 = vec1[i];
+            if (i < l2) val2 = vec2[i];
+            if (val1 < val2) return -1;
+            if (val1 > val2) return 1;
         }
         return 0;
     }
