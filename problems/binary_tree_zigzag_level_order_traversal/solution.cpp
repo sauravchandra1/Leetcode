@@ -11,20 +11,24 @@
  */
 class Solution {
 public:
+    vector<vector<int>> vec;
     vector<vector<int>> zigzagLevelOrder(TreeNode* root) {
-        const int N = 1e5;
-        vector<vector<int>> order(N);
-        int level = 0;
-        function<void(TreeNode*, int)> dfs = [&](TreeNode* curr, int l) {
-            if (curr == nullptr) return;
-            order[l].push_back(curr->val);
-            dfs(curr->left, l + 1);
-            dfs(curr->right, l + 1);
-            level = max(level, l + 1);
-        };
-        dfs(root, 0);
-        order.resize(level);
-        for (int i = 1; i < level; i += 2) reverse(order[i].begin(), order[i].end());
-        return order;
-    }
+        queue<TreeNode*> Q;
+        if (root) Q.push(root);
+        vector<int> tt;
+        while (!Q.empty()) {
+            int n = Q.size(); 
+            tt.clear();
+            for (int i = 0; i < n; i++) {
+                auto p = Q.front();
+                Q.pop();
+                tt.push_back(p->val);
+                if (p->left) Q.push(p->left);
+                if (p->right) Q.push(p->right);
+            }
+            vec.push_back(tt);
+        }
+        for (int i = 1; i < vec.size(); i += 2) reverse(vec[i].begin(), vec[i].end());
+        return vec;
+    };
 };
