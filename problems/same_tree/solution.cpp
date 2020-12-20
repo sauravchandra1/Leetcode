@@ -12,15 +12,13 @@
 class Solution {
 public:
     bool isSameTree(TreeNode* p, TreeNode* q) {
-        function<bool(TreeNode*, TreeNode*)> dfs = [&](TreeNode* p, TreeNode* q) {
-            if (p == NULL && q != NULL) return false;
-            if (p != NULL && q == NULL) return false;
-            if (p == NULL && q == NULL) return true;
-            if (p->val != q->val) return false;
-            int l = dfs(p->left, q->left);
-            int r = dfs(p->right, q->right);
-            return (l && r);
-        };
-        return dfs(p, q);
+        if (p == NULL && q == NULL) return true;
+        if (p == NULL && q != NULL) return false;
+        if (p != NULL && q == NULL) return false;
+        if (p->val != q->val) return false;
+        bool a = isSameTree(p->left, q->left);
+        bool b = isSameTree(p->right, q->right);
+        if (a && b) return true;
+        else return false;
     }
 };
