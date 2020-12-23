@@ -11,25 +11,28 @@
  */
 class Solution {
 public:
-    TreeNode* buildTree(vector<int>& preorder, vector<int>& inorder) {
-        unordered_map<int, int> mp;
-        int len = inorder.size();
-        if (len == 0) return NULL;
-        int i = 0;
-        for (auto v : inorder) {
-            mp[v] = i;
-            i++;
+    int idx = 0;
+    map<int ,int> mp;
+    TreeNode* trav(vector<int>& preorder, vector<int>& inorder, int l, int r) {
+        TreeNode* root = NULL;
+        if (l > r || idx == inorder.size()) return NULL;
+        if (l == r) {
+            root = new TreeNode(preorder[idx]);
+            idx++;
         }
-        int idx = 0;
-        function<TreeNode*(int, int)> dfs = [&](int s, int e) {
-            TreeNode* root = NULL;
-            if (s > e) return root;
-            int p = mp[preorder[idx++]];
-            root = new TreeNode(inorder[p]);
-            root->left = dfs(s, p - 1);
-            root->right = dfs(p + 1, e);
-            return root;
-        };
-        return dfs(0, len - 1);
+        else {
+            int i = mp[preorder[idx]];
+            root = new TreeNode(preorder[idx]);
+            idx++;
+            root->left = trav(preorder, inorder, l, i - 1);
+            root->right = trav(preorder, inorder, i + 1, r);
+        }
+        return root;
+    }
+    TreeNode* buildTree(vector<int>& preorder, vector<int>& inorder) {
+        for (int i = 0; i < inorder.size(); i++) {
+            mp[inorder[i]] = i;
+        }
+        return trav(preorder, inorder, 0, inorder.size() - 1);
     }
 };
