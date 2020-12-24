@@ -18,25 +18,23 @@ public:
 
 class Solution {
 public:
-    Node* connect(Node* root) {
-        const int N = 30;
-        vector<vector<Node*>> ans(N);
-        function<void(Node*, int d)> dfs = [&](Node* root, int d) {
-            if (root == NULL) return;
-            ans[d].push_back(root);
-            dfs(root->left, d + 1);
-            dfs(root->right, d + 1);
-        };
-        dfs(root, 0);
-        for (int i = 0; i < N; i++) {
-            int len = ans[i].size();
-            for (int j = 0; j < len - 1; j++) {
-                ans[i][j]->next = ans[i][j + 1];
+    void trav(Node* root) {
+        if (root == NULL) return;
+        if (root->left) root->left->next = root->right;
+        Node* l = root->left;
+        Node* r = root->right;
+        if (l && r) {
+            while (l->right && r->left) {
+                l = l->right;
+                r = r->left;
+                l->next = r;
             }
-            if (len) {
-                ans[i][len - 1]->next = NULL;
-            }
+            trav(root->left);
+            trav(root->right);
         }
+    }
+    Node* connect(Node* root) {
+        trav(root);
         return root;
     }
 };
