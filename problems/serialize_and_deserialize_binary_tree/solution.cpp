@@ -11,81 +11,70 @@ class Codec {
 public:
 
     // Encodes a tree to a single string.
-    string serialize(TreeNode* root) {
-        if (root == NULL) return "X";
-        else {
-            string str;
-            queue<TreeNode*> Q;
-            str += to_string(root->val) + ",";
-            Q.push(root);
-            TreeNode* t = NULL;
-            while (!Q.empty()) {
-                t = Q.front();
-                Q.pop();
-                if (t->left == NULL) {
-                    str += "X,";
-                }
-                else {
-                    str += to_string(t->left->val) + ",";
-                    Q.push(t->left);
-                }
-                if (t->right == NULL) {
-                    str += "X,";
-                }
-                else {
-                    str += to_string(t->right->val) + ",";
-                    Q.push(t->right);
-                }
-            }
-            str.pop_back();
-            return str;
-        }
+    string str;
+    int inf = 1e5;
+    string conv(int num) {
+        string tmp = "N";
+        if (num == inf) return tmp;
+        return to_string(num);
     }
-
+    void trav(TreeNode* root) {
+        if (root == NULL) return ;   
+        int l, r;
+        l = r = inf;
+        if (root->left) l = root->left->val;
+        if (root->right) r = root->right->val;
+        string a = conv(l) + ",";
+        string b = conv(r) + ",";
+        str += a;
+        str += b;
+        trav(root->left);
+        trav(root->right);
+    }
+    
+    string serialize(TreeNode* root) {
+        if (root == NULL) str += "N,";
+        else {
+            str += to_string(root->val) + ",";
+        }
+        trav(root);
+        str.pop_back();
+        return str;
+    }
+    int i = 0;
+    int next(string data) {
+        string num;
+        while (i < data.size() && data[i] != ',') {
+            num += data[i];
+            i++;
+        }
+        i++;
+        if (num == "N") return inf;
+        int v = stoi(num);
+        return v;
+    }
+    
+    void trav1(TreeNode* root, string data) {
+        if (root == NULL) return ;
+        int l = next(data);
+        int r = next(data);
+        if (l != inf) root->left = new TreeNode(l);
+        if (r != inf) root->right = new TreeNode(r);
+        trav1(root->left, data);
+        trav1(root->right, data);
+    }
+    
     // Decodes your encoded data to tree.
     TreeNode* deserialize(string data) {
-        vector<string> token;
-        stringstream check(data);
-        string str;
-        while (getline(check, str, ',')) token.push_back(str);
-        int len = token.size();
-        queue<TreeNode*> Q;
-        TreeNode* pp = NULL;
-        TreeNode* root = new TreeNode();
-        if (len == 0) return NULL;
-        auto get = [&](string str) {
-            if (str[0] == 'X') return -99999999;
-            else return stoi(str);
-        };
-        Q.push(root);
-        if (token[0] == "X") return NULL;
-        root->val = get(token[0]);
-        int idx = 0;
-        while (!Q.empty()) {
-            pp = Q.front();
-            Q.pop();
-            int l = idx + 1;
-            int r = idx + 2;
-            if (l < len) {
-                int val = get(token[l]);
-                if (val != -99999999) {
-                    pp->left = new TreeNode(val);
-                    Q.push(pp->left);
-                }
-            }
-            if (r < len) {
-                int val = get(token[r]);
-                if (val != -99999999) {
-                    pp->right = new TreeNode(val);
-                    Q.push(pp->right);
-                }
-            }
-            idx += 2;
-        }
+        TreeNode* root = NULL;
+        int num = next(data);
+        if (num == inf) return root;
+        root = new TreeNode(num);
+        trav1(root, data);
         return root;
     }
 };
 
 // Your Codec object will be instantiated and called as such:
-// Codec codec;
-// codec.deserialize(codec.serialize(root));
+// Codec ser, deser;
+// TreeNode* ans = deser.deserialize(ser.serialize(root));
