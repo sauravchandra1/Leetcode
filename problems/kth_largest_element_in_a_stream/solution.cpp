@@ -1,12 +1,7 @@
 class KthLargest {
 public:
-    struct cmp {
-        bool operator()(const int &a, const int &b) {
-            return a > b;
-        }
-    };
+    priority_queue<int, vector<int>, greater<int>> pq;
     int K;
-    priority_queue<int, vector<int>, cmp> pq;
     KthLargest(int k, vector<int>& nums) {
         K = k;
         for (auto v : nums) {
@@ -17,9 +12,7 @@ public:
     
     int add(int val) {
         pq.push(val);
-        if (pq.size() > K) {
-            pq.pop();
-        }
+        if (pq.size() > K) pq.pop();
         return pq.top();
     }
 };
