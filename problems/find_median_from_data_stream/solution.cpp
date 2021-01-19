@@ -1,25 +1,49 @@
 class MedianFinder {
 public:
     /** initialize your data structure here. */
-    multiset<int> ans;
-    multiset<int> :: iterator it;
+    priority_queue<int> Max;
+    priority_queue<int, vector<int>, greater<int>> Min;
+    
     MedianFinder() {
         
     }
     
     void addNum(int num) {
-        if (ans.size() == 0) {
-            it = ans.insert(num);
-            return ;
+        if (Max.size() == 0 && Min.size() == 0) {
+            Max.push(num);
+        } else if (num < Max.top()) {
+            Max.push(num);
+        } else {
+            Min.push(num);
         }
-        ans.insert(num);
-        if (ans.size() % 2 == 0 && num >= *it) it++;
-        if (ans.size() & 1 && num < *it) it--;
+        if (abs((int)Max.size() - (int)Min.size()) == 2) {
+            if (Max.size() > Min.size()) {
+                num = Max.top();
+                Max.pop();
+                Min.push(num);
+            } else {
+                num = Min.top();
+                Min.pop();
+                Max.push(num);
+            }
+        }
     }
     
     double findMedian() {
-        if (ans.size() & 1LL) return *it;
-        else return (double)(*it + *prev(it)) / 2;
+        double a, b, ans = 0;
+        int szMax = Max.size();
+        int szMin = Min.size();
+        if (!szMax && !szMin) return ans;
+        if (szMax == szMin) {
+            a = Max.top();
+            b = Min.top();
+            ans = (a + b) / 2.0;
+            return ans;
+        } else if (szMax > szMin){
+            return Max.top();
+        } else {
+            return Min.top();
+        }
     }
 };
 
