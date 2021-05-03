@@ -2,24 +2,21 @@ class Solution {
 public:
     int coinChange(vector<int>& coins, int amount) {
         int n = coins.size();
-        const int inf = 1e8;
+        const int inf = 1e9;
         vector<int> dp(amount + 1, -1);
-        sort(coins.begin(), coins.end());
-        function<int(int)> dfs = [&](int val) {
-            if (val == 0) return 0;
-            auto &ans = dp[val];
-            if (ans != -1) return ans;
-            ans = inf;
+        function<int(int)> dfs = [&](int amount) {
+            if (amount < 0) return inf;
+            if (amount == 0) return 0;
+            auto& res = dp[amount];
+            if (res != -1) return res;
+            res = inf;
             for (int i = 0; i < n; i++) {
-                if (coins[i] > val) {
-                    return ans;   
-                }
-                ans = min(ans, dfs(val - coins[i]) + 1);
+                res = min(res, dfs(amount - coins[i]) + 1);
             }
-            return ans;
+            return res;
         };
         int ans = dfs(amount);
-        if (ans == inf) return -1;
+        if (ans == inf) ans = -1;
         return ans;
     }
 };
