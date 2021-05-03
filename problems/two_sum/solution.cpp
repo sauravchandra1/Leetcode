@@ -1,25 +1,16 @@
 class Solution {
 public:
     vector<int> twoSum(vector<int>& nums, int target) {
-        int N = 100000;
-        map<int, int> ind;
-        map<int, bool> vis;
-        for (int i = 0; i < N; i++) {
-            vis[i] = false;
+        unordered_map<int, int> mp;
+        for (int i = 0; i < nums.size(); i++) {
+            mp[nums[i]] = i;
         }
         vector<int> ans;
         for (int i = 0; i < nums.size(); i++) {
-            int num = nums[i];
-            ind[num] = i;
-            vis[num] = true;
-        }
-        for (int i = 0; i < nums.size(); i++) {
-            int num = nums[i];
-            int rem = target - num;
-            if (vis[rem] && (ind[rem] != i)) {
-                ans.push_back(min(i, ind[rem]));
-                ans.push_back(max(i, ind[rem]));
-                break;
+            if (mp.count(target - nums[i]) > 0 && mp[target - nums[i]] > i) {
+                ans.push_back(i);
+                ans.push_back(mp[target - nums[i]]);
+                return ans;
             }
         }
         return ans;
