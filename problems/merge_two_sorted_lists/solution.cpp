@@ -11,30 +11,28 @@
 class Solution {
 public:
     ListNode* mergeTwoLists(ListNode* l1, ListNode* l2) {
-        ListNode* n = new ListNode();
-        ListNode* root = n;
-        function<void(int)> add = [&](int val) {
-            ListNode* t = new ListNode(val);
-            n->next = t;
-            n = t;
-        };
-        while (l1 != NULL && l2 != NULL) {
-            if (l1->val < l2->val) {
-                add(l1->val);
-                l1 = l1->next;
-            } else {
-                add(l2->val);
-                l2 = l2->next;
-            }
-        }
-        while (l1 != NULL) {
-            add(l1->val);
+        ListNode* head = 0, *curr = 0;
+        if (!l1) return l2;
+        if (!l2) return l1;
+        if (l1->val < l2->val) {
+            head = curr = l1;
             l1 = l1->next;
-        }
-        while (l2 != NULL) {
-            add(l2->val);
+        } else {
+            head = curr = l2;
             l2 = l2->next;
         }
-        return root->next;
+        while (l1 && l2) {
+            if (l1->val < l2->val) {
+                curr->next = l1;
+                l1 = l1->next;
+            } else {
+                curr->next = l2;
+                l2 = l2->next;
+            }
+            curr = curr->next;
+        }
+        if (l1) curr->next = l1;
+        if (l2) curr->next = l2;
+        return head;
     }
 };
