@@ -2,20 +2,22 @@ class MinStack {
 public:
     /** initialize your data structure here. */
     stack<int> stk;
-    multiset<int> se;
+    vector<int> vec;
+    const int N = 30004;
+    int idx;
     MinStack() {
-        
+        idx = 0;
+        vec.resize(N, 0);
     }
     
     void push(int x) {
         stk.push(x);
-        se.insert(x);
+        if (idx == 0) vec[idx++] = x;
+        else vec[idx++] = min(vec[idx - 1], x);
     }
     
     void pop() {
-        int x = stk.top();
-        auto it = se.find(x);
-        se.erase(it);
+        idx--;
         stk.pop();
     }
     
@@ -24,7 +26,7 @@ public:
     }
     
     int getMin() {
-        return *se.begin();
+        return vec[idx - 1];
     }
 };
 
