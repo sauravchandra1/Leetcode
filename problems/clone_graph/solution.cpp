@@ -24,17 +24,21 @@ public:
 
 class Solution {
 public:
-    unordered_map<Node*, Node*> mp;
     Node* cloneGraph(Node* node) {
-        if (node == NULL) {
-            return NULL;
-        }
-        if (mp.find(node) == mp.end()) {
-            mp[node] = new Node(node->val);
-            for (auto v : node->neighbors) {
-                mp[node]->neighbors.push_back(cloneGraph(v));
+        unordered_map<int, Node*> mp;
+        function<Node*(Node*)> dfs = [&](Node* node) {
+            if (node == 0) return node;
+            Node* curr = new Node(node->val);
+            mp[node->val] = curr;
+            for (int i = 0; i < node->neighbors.size(); i++) {
+                auto C = node->neighbors;
+                if (mp.count(C[i]->val) > 0) 
+                    curr->neighbors.push_back(mp[C[i]->val]);
+                else 
+                    curr->neighbors.push_back(dfs(C[i]));
             }
-        }
-        return mp[node];
+            return curr;
+        };
+        return dfs(node);
     }
 };
