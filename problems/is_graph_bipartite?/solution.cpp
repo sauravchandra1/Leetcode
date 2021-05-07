@@ -1,34 +1,28 @@
 class Solution {
-    public:
-        bool isBipartite(vector < vector < int >> & graph) {
-            int n = graph.size();
-            bool possible = true;
-            vector < int > col(n, -1);
-            vector < bool > visited(n, false);
-
-            for (int i = 0; i < n; i++) {
-                if (!visited[i]) {
-                    col[i] = 0;
-                    stack < int > s;
-                    s.push(i);
-                    visited[i] = true;
-                    while (!s.empty()) {
-                        int u = s.top();
-                        s.pop();
-                        for (int v: graph[u]) {
-                            if (col[v] == col[u]) {
-                                possible = false;
-                                break;
-                            }
-                            if (!visited[v]) {
-                                col[v] = 1 ^ col[u];
-                                s.push(v);
-                                visited[v] = true;
-                            }
-                        }
-                    }
-                }
+public:
+    bool isBipartite(vector<vector<int>>& graph) {
+        int V = graph.size();
+        if (V == 0) return true;
+        vector<int> color(V, -1);
+        function<void(int, int)> dfs = [&](int source, int c) {
+            color[source] = c;
+            for (int i = 0; i < graph[source].size(); i++) {
+                int node = graph[source][i];
+                if (color[node] == -1) {
+                    dfs(node, 1 - c);
+                } 
             }
-            return possible;
+        };
+        bool ok = true;
+        for (int i = 0; i < V; i++) {
+            if (color[i] == -1) dfs(i, 0);
         }
+        for (int i = 0; i < V; i++) {
+            int c = 1 - color[i];
+            for (auto v : graph[i]) {
+                if (color[v] != c) return false;
+            }
+        }
+        return true;
+    }
 };
