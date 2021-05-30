@@ -1,41 +1,46 @@
 class Solution {
-    public:
-    char matrix[10][10];
-    int ans = 0;
-    bool isSafe(int row, int col, int n) {
-        for (int i = row; i >= 0; i--) {
-            if (matrix[i][col] == 'Q')
-                return false;
-        }
-        int i = row, j = col;
-        while (i < n && j < n && ~i && ~j) {
-            if (matrix[i][j] == 'Q') return false;
-            i--;
-            j--;
-        }
-        i = row, j = col;
-        while (i < n && j < n && ~i && ~j) {
-            if (matrix[i][j] == 'Q') return false;
-            i--;
-            j++;
-        }
-        return true;
-    }
-    void nQueen(int n, int row) {
-        if (row == n) {
-            ans++;
-        }
-        for (int col = 0; col < n; col++) {
-            if (isSafe(row, col, n)) {
-                matrix[row][col] = 'Q';
-                nQueen(n, row + 1);
-                matrix[row][col] = '.';
-            }
-        }
-    }
+public:
     int totalNQueens(int n) {
-        nQueen(n, 0);
-        return ans;
-
+        vector<string> board(n);
+        for (int i = 0; i < n; i++) 
+            for (int j = 0; j < n; j++)
+                board[i] += '.';
+        vector<vector<string>> ans;
+        auto isSafe = [&](int i, int j) {
+            int x = i, y = j;
+            //Check Left Diagonal
+            while (x >= 0 && y >= 0) {
+                if (board[x][y] != '.') return false;
+                x--, y--;
+            }
+            //Check Right Diagonal
+            x = i, y = j;
+            while (x >= 0 && y < n) {
+                if (board[x][y] != '.') return false;
+                x--, y++;
+            }
+            //Check Column
+            x = i, y = j;
+            while (x >= 0) {
+                if (board[x][y] != '.') return false;
+                x--;
+            }
+            return true;
+        };
+        function<void(int)> dfs = [&](int row) {
+            if (row == n) {
+                ans.push_back(board);
+                return;
+            }
+            for (int j = 0; j < n; j++) {
+                if (isSafe(row, j)) {
+                    board[row][j] = 'Q';
+                    dfs(row + 1);
+                    board[row][j] = '.';
+                }
+            }
+        };
+        dfs(0);
+        return ans.size();
     }
 };
