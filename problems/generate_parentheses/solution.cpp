@@ -1,23 +1,18 @@
 class Solution {
-    public:
-        vector < string > ans;
-    void recur(int c, int c1, int n, string & s) {
-        if (c1 == n && c == 0)
-        {
-            ans.push_back(s);
-            return;
-        }
-        s += "(";
-        if (c1 < n)
-            recur(c + 1, c1 + 1, n, s); 
-        s[s.length() - 1] = ')';
-        if (c > 0)
-            recur(c - 1, c1, n, s);    
-        s = s.substr(0, s.length() - 1);
-    }
-    vector < string > generateParenthesis(int n) {
-        string s = "";
-        recur(0, 0, n, s);
+public:
+    vector<string> generateParenthesis(int n) {
+        vector<string> ans;
+        function<void(string, int, int)> dfs = [&](string str, int sum, int idx) {
+            if (sum < 0 || sum > n) return;
+            if (idx == 2 * n) {
+                if (sum == 0)
+                    ans.push_back(str);
+                return;
+            }
+            dfs(str + '(', sum + 1, idx + 1);
+            dfs(str + ')', sum - 1, idx + 1);
+        };
+        dfs("", 0, 0);
         return ans;
     }
 };
