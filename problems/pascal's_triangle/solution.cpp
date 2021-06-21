@@ -1,18 +1,13 @@
 class Solution {
 public:
     vector<vector<int>> generate(int numRows) {
-        vector<vector<int>> ans;
-        vector<int> temp;
-        temp.push_back(1);
-        ans.push_back(temp);
+        vector<vector<int>> ans(numRows);
+        ans[0].push_back(1);
         for (int i = 1; i < numRows; i++) {
-            temp.clear();
-            temp.push_back(1);
-            for (int j = 1; j < ans.back().size(); j++) {
-                temp.push_back(ans.back()[j] + ans.back()[j - 1]);
-            }
-            temp.push_back(1);
-            ans.push_back(temp);
+            ans[i].push_back(1);
+            for (int j = 1; j < ans[i - 1].size(); j++) 
+                ans[i].push_back(ans[i - 1][j] + ans[i - 1][j - 1]);
+            ans[i].push_back(1);
         }
         return ans;
     }
