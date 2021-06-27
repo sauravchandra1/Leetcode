@@ -1,24 +1,23 @@
 class Solution {
-    public:
-        int candy(vector < int > & nums) {
-            int n = nums.size();
-            if (n < 2) return n;
-            int sum = 1, start = 0, left = 0, right = 0, peak = 0, i = 0;
-            while (i < n - 1) {
-                while (i < n - 1 && nums[i + 1] > nums[i]) i++; 
-                left = i - start; 
-                start = i; 
-                while (i < n - 1 && nums[i + 1] < nums[i]) i++; 
-                right = i - start; 
-                start = right; 
-                peak = max(left, right) + 1; 
-                sum += (1 + left) * left / 2 + (1 + right) * right / 2 + peak - 1;
-                while (i < n - 1 && nums[i + 1] == nums[i]) {
-                    i++;
-                    sum++;
-                }
-                start = i; 
-            }
-            return sum;
+public:
+    int candy(vector<int>& ratings) {
+        int len = ratings.size();
+        vector<int> index(len);
+        iota(index.begin(), index.end(), 0);
+        vector<int> ans(len, 0);
+        sort(index.begin(), index.end(), [&](const int& i, const int& j) {
+            return (ratings[i] < ratings[j]);
+        });
+        int val, sum = 0;
+        for (auto& i : index) {
+            val = 0;
+            if (i - 1 >= 0 && ratings[i - 1] < ratings[i]) 
+                if (ans[i - 1] > val) val = ans[i - 1];
+            if (i + 1 < len && ratings[i + 1] < ratings[i]) 
+                if (ans[i + 1] > val) val = ans[i + 1];
+            ans[i] = val + 1;
+            sum += ans[i];
         }
+        return sum;
+    }
 };
