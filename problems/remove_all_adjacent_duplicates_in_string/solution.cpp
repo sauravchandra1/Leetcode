@@ -1,15 +1,17 @@
 class Solution {
 public:
     string removeDuplicates(string s) {
-        int n = s.size();
-        for (int i = 1; i < n;) {
-            if (s[i] == s[i - 1]) {
-                s.erase(i - 1, 2);
-                i = 1;
-            } else {
-                i++;
-            }
+        stack<char> stk;
+        for (auto& c : s) {
+            if (!stk.empty() && c == stk.top()) stk.pop();
+            else stk.push(c);
         }
-        return s;
+        string ans;
+        while (!stk.empty()) {
+            ans += stk.top();
+            stk.pop();
+        }
+        reverse(ans.begin(), ans.end());
+        return ans;
     }
 };
