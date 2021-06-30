@@ -9,26 +9,16 @@
  */
 class Solution {
 public:
-    TreeNode* lca = NULL;
-    bool trav(TreeNode* root, TreeNode* p, TreeNode* q) {
-        if (root == NULL) return false;
-        if (root->val == p->val || root->val == q->val) {
-            bool l = trav(root->left, p, q);
-            bool r = trav(root->right, p, q);
-            if (l || r) lca = root;
-            return true;
-        } 
-        bool l = trav(root->left, p, q);
-        bool r = trav(root->right, p, q);
-        if (l && r) {
-            lca = root;
-            return true;
-        } 
-        if (l || r) return true;
-        else return false;
-    }
     TreeNode* lowestCommonAncestor(TreeNode* root, TreeNode* p, TreeNode* q) {
-        trav(root, p, q);
-        return lca;
+        TreeNode* ans = 0;
+        function<int(TreeNode*)> dfs = [&](TreeNode* curr) {
+            if (ans != 0 || !curr) return 0;
+            int res = dfs(curr->left) + dfs(curr->right);
+            if (curr == p || curr == q) res++;
+            if (res == 2 && !ans) ans = curr;
+            return res;
+        };
+        dfs(root);
+        return ans;
     }
 };
