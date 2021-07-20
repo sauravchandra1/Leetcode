@@ -2,7 +2,6 @@ class Solution {
     public:
         vector < int > temp;
     Solution(vector < int > & nums) {
-        temp.clear();
         temp = nums;
     }
 
