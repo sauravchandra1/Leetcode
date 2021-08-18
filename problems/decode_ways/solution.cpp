@@ -1,35 +1,29 @@
 class Solution {
-    public:
-        int numDecodings(string s) {
-            if (s.size() == 0)
-                return 0;
-            int ith = 0, i_1 = 1, i_2 = 0;
-            int curr = s[s.size() - 1] - '0', prev = 0, val = 0;
-            if (curr != 0) {
-                ith = 1;
+public:
+    int numDecodings(string s) {
+        const int N = 26;
+        int n = s.size();
+        auto isFine = [](char a, char b) {
+            int num = (a - '0') * 10 + (b - '0');
+            return ((num > N || a == '0') ? false : true);
+        };
+        vector<int> dp(n, -1);
+        function<int(int)> dfs = [&](int idx) {
+            if (idx == n) return 1;
+            if (s[idx] == '0') return 0;
+            if (idx == n - 1) return 1;
+            auto& res = dp[idx];
+            if (res != -1) return res;
+            if (s[idx + 1] == '0') {
+                if (!isFine(s[idx], s[idx + 1])) return (res = 0);
+                res = dfs(idx + 2);
             }
-            prev = curr;
-            i_2 = i_1;
-            i_1 = ith;
-            for (int i = s.size() - 2; i >= 0; i--) {
-                curr = s[i] - '0';
-                if (curr == 0) {
-                    ith = 0;
-                } else {
-                    val = curr * 10 + prev;
-                    if (val == 0) {
-                        ith = 0;
-                    } else {
-                        if (val <= 26)
-                            ith = i_1 + i_2;
-                        else
-                            ith = i_1;
-                    }
-                }
-                prev = curr;
-                i_2 = i_1;
-                i_1 = ith;
+            else {
+                res = dfs(idx + 1);
+                if (isFine(s[idx], s[idx + 1])) res += dfs(idx + 2);
             }
-            return ith;
-        }
+            return res;
+        };
+        return dfs(0);
+    }
 };
