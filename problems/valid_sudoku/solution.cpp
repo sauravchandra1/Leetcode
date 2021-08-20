@@ -1,43 +1,38 @@
 class Solution {
 public:
     bool isValidSudoku(vector<vector<char>>& board) {
-        set<char> se;
         const int N = 9;
-        // Row checking
+        vector<int> visited(N);
+        auto check = [&]() {
+            for (int i = 0; i < N; i++) if (visited[i] > 1) return false;
+            return true;
+        };
         for (int i = 0; i < N; i++) {
-            se.clear();
+            visited.assign(N, 0);
             for (int j = 0; j < N; j++) {
-                auto ch = board[i][j];
-                if (ch >= '0' && ch <= '9') {
-                    if (se.count(ch) > 0) return false;
-                    se.insert(ch);
-                }
+                if (board[i][j] == '.') continue;
+                visited[board[i][j] - '0' - 1]++;
             }
+            if (!check()) return false;
         }
-        // Column checking
         for (int j = 0; j < N; j++) {
-            se.clear();
+            visited.assign(N, 0);
             for (int i = 0; i < N; i++) {
-                auto ch = board[i][j];
-                if (ch >= '0' && ch <= '9') {
-                    if (se.count(ch) > 0) return false;
-                    se.insert(ch);
-                }
+                if (board[i][j] == '.') continue;
+                visited[board[i][j] - '0' - 1]++;
             }
+            if (!check()) return false;
         }
-        // Sub-boxes checking
-        for (int br = 0; br < N; br += 3) {
-            for (int bc = 0; bc < N; bc += 3) {
-                se.clear();
-                for (int i = br; i < br + 3; i++) {
-                    for (int j = bc; j < bc + 3; j++) {
-                        auto ch = board[i][j];
-                        if (ch >= '0' && ch <= '9') {
-                            if (se.count(ch) > 0) return false;
-                            se.insert(ch);
-                        }
+        for (int i = 0; i < N; i += 3) {
+            for (int j = 0; j < N; j += 3) {
+                visited.assign(N, 0);
+                for (int l = 0; l < 3; l++) {
+                    for (int r = 0; r < 3; r++) {
+                        if (board[i + l][j + r] == '.') continue;
+                        visited[board[i + l][j + r] - '0' - 1]++;
                     }
                 }
+                if (!check()) return false;
             }
         }
         return true;
