@@ -1,24 +1,27 @@
+/**
+ * Definition for a binary tree node.
+ * struct TreeNode {
+ *     int val;
+ *     TreeNode *left;
+ *     TreeNode *right;
+ *     TreeNode() : val(0), left(nullptr), right(nullptr) {}
+ *     TreeNode(int x) : val(x), left(nullptr), right(nullptr) {}
+ *     TreeNode(int x, TreeNode *left, TreeNode *right) : val(x), left(left), right(right) {}
+ * };
+ */
 class Solution {
-    public:
-
-        bool ans = 0;
-    void traverse(struct TreeNode * root, int k, vector < int > & v) {
-        if (root == NULL)
-            return;
-
-        else {
-            traverse(root -> left, k, v);
-            if (binary_search(v.begin(), v.end(), (k - (root -> val))))
-                ans = 1;
-            v.push_back(root -> val);
-            traverse(root -> right, k, v);
-        }
-    }
-
-    bool findTarget(TreeNode * root, int k) {
-
-        vector < int > v;
-        traverse(root, k, v);
-        return ans;
+public:
+    bool findTarget(TreeNode* root, int k) {
+        unordered_set<int> se;
+        bool ok = false;
+        function<void(TreeNode*)> dfs = [&](TreeNode* root) {
+            if (!root || ok) return;
+            dfs(root->left);
+            if (se.count(k - root->val)) ok = true;
+            se.insert(root->val);
+            dfs(root->right);
+        };
+        dfs(root);
+        return ok;
     }
 };
