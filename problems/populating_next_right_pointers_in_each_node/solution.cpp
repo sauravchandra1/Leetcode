@@ -18,23 +18,27 @@ public:
 
 class Solution {
 public:
-    void trav(Node* root) {
-        if (root == NULL) return;
-        if (root->left) root->left->next = root->right;
-        Node* l = root->left;
-        Node* r = root->right;
-        if (l && r) {
-            while (l->right && r->left) {
-                l = l->right;
-                r = r->left;
-                l->next = r;
-            }
-            trav(root->left);
-            trav(root->right);
-        }
-    }
     Node* connect(Node* root) {
-        trav(root);
+        if (!root) return root;
+        queue<Node*> Q;
+        Node* next = 0, curr = 0;
+        Q.push(root);
+        while (!Q.empty()) {
+            next = Q.front();
+            Q.pop();
+            int len = Q.size();
+            next->next = 0;
+            if (next->right) Q.push(next->right);
+            if (next->left) Q.push(next->left);
+            for (int i = 0; i < len; i++) {
+                Node* curr = Q.front();
+                Q.pop();
+                curr->next = next;
+                next = curr;
+                if (curr->right) Q.push(curr->right);
+                if (curr->left) Q.push(curr->left);
+            }
+        }
         return root;
     }
 };
