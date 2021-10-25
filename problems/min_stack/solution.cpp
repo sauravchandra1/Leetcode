@@ -1,23 +1,18 @@
 class MinStack {
 public:
-    /** initialize your data structure here. */
     stack<int> stk;
-    vector<int> vec;
-    const int N = 30004;
-    int idx;
+    multiset<int> se;
     MinStack() {
-        idx = 0;
-        vec.resize(N, 0);
     }
     
-    void push(int x) {
-        stk.push(x);
-        if (idx == 0) vec[idx++] = x;
-        else vec[idx++] = min(vec[idx - 1], x);
+    void push(int val) {
+        stk.push(val);
+        se.insert(val);
     }
     
     void pop() {
-        idx--;
+        auto itr = se.find(stk.top());
+        se.erase(itr);
         stk.pop();
     }
     
@@ -26,14 +21,14 @@ public:
     }
     
     int getMin() {
-        return vec[idx - 1];
+        return *se.begin();
     }
 };
 
 /**
  * Your MinStack object will be instantiated and called as such:
  * MinStack* obj = new MinStack();
- * obj->push(x);
+ * obj->push(val);
  * obj->pop();
  * int param_3 = obj->top();
  * int param_4 = obj->getMin();
