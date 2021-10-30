@@ -23,7 +23,6 @@ public:
                 hash += mod;
                 hash *= N;
                 hash %= mod;
-                if (hash < 0) while(1);
                 hash = (hash + (S[i] - 'a')) % mod;
                 last = (p[l - 1] * (S[j++] - 'a') * 1LL) % mod;
                 if (mp.find(hash) != mp.end()) {
