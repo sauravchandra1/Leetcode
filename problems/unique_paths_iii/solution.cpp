@@ -1,42 +1,40 @@
 class Solution {
 public:
     int uniquePathsIII(vector<vector<int>>& grid) {
-        vector<int> dx {0, 1, 0, -1};
-        vector<int> dy {1, 0, -1, 0};
         int n = grid.size();
-        if (n == 0) return 0;
         int m = grid[0].size();
-        int cnt = 0;
-        pair<int, int> p;
+        pair<int, int> start;
+        int count = 1;
         for (int i = 0; i < n; i++) {
             for (int j = 0; j < m; j++) {
-                int v = grid[i][j];
-                if (v == 0) cnt++;
-                if (v == 1) {
-                    p.first = i;
-                    p.second = j;
-                }
+                if (grid[i][j] == 0) count++;
+                if (grid[i][j] == 1) { start.first = i; start.second = j; }
             }
         }
+        const int N = 4;
+        vector<int> dx {0, 1, 0, -1};
+        vector<int> dy {1, 0, -1, 0};
         auto get = [&](int x, int y) {
             if (x < 0 || x >= n || y < 0 || y >= m) return false;
-            else return true;
+            return true;
         };
-        function<int(int, int, int)> dfs = [&](int x, int y, int c) {
-            if (get(x, y) == false) return 0;
+        int ans = 0;
+        function<void(int, int, int)> dfs = [&](int x, int y, int d) {
+            if (grid[x][y] == -1) return;
             if (grid[x][y] == 2) {
-                if (c - 1 == cnt) return 1;
-                return 0;
-            } 
-            if (grid[x][y] == -1) return 0;
-            int res = 0;
+                if (count == d) ans++;
+                return;
+            }
             grid[x][y] = -1;
-            for (int i = 0; i < 4; i++) {
-                res += dfs(x + dx[i], y + dy[i], c + 1);
+            for (int i = 0; i < N; i++) {
+                int xx = x + dx[i];
+                int yy = y + dy[i];
+                if (get(xx, yy)) dfs(xx, yy, d + 1);
             }
             grid[x][y] = 0;
-            return res;
         };
-        return dfs(p.first, p.second, 0);
+        grid[start.first][start.second] = 0;
+        dfs(start.first, start.second, 0);
+        return ans;
     }
 };
