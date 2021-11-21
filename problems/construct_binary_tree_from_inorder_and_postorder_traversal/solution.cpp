@@ -11,31 +11,20 @@
  */
 class Solution {
 public:
-    map<int, int> mp;
-    int idx;
-    TreeNode* trav(vector<int>& inorder, vector<int>& postorder, int l, int r) {
-        TreeNode* root = new TreeNode();
-        if (l > r) return NULL;
-        if (idx < 0) return NULL;
-        root->val = postorder[idx];
-        if (l == r) {
-            idx--;
-            return root;
-        } else {
-            int i = mp[postorder[idx]];
-            idx--;
-            root->right = trav(inorder, postorder, i + 1, r);
-            root->left = trav(inorder, postorder, l, i - 1);
-            return root;
-        }
-    }
     TreeNode* buildTree(vector<int>& inorder, vector<int>& postorder) {
-        for (int i = 0; i < inorder.size(); i++) {
-            mp[inorder[i]] = i;
-        }
-        int len = inorder.size() - 1;
-        idx = len;
-        TreeNode* root = trav(inorder, postorder, 0, len);
-        return root;
+        unordered_map<int, int> mp;
+        int len = inorder.size();
+        int idx = len - 1;
+        for (int i = 0; i < len; i++) mp[inorder[i]] = i;
+        function<TreeNode*(int, int)> dfs = [&](int l, int r) {
+            TreeNode* curr = 0;
+            if (idx < 0 || l > r) return curr;
+            int i = mp[postorder[idx--]];
+            curr = new TreeNode(inorder[i]);
+            curr->right = dfs(i + 1, r);
+            curr->left = dfs(l, i - 1);
+            return curr;
+        };
+        return dfs(0, len - 1);
     }
 };
