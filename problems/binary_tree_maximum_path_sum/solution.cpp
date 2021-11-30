@@ -11,20 +11,18 @@
  */
 class Solution {
 public:
-    int ans = -1e5;
-    int _max = -1e5;
-    int trav(TreeNode* root) {
-        if (root == NULL) return 0;
-        int a = trav(root->left);
-        int b = trav(root->right);
-        int m = max(0, max(a, b));
-        _max = max(_max, root->val);
-        ans = max(ans, max(0, root->val + max(0, a) + max(0, b)));
-        return max(0, m + root->val);
-    }
     int maxPathSum(TreeNode* root) {
-        int res =  max(ans, trav(root));
-        if (res == 0) return _max;
-        else return res;
+        int ans = 0, _max = -1e9;
+        function<int(TreeNode*)> dfs = [&](TreeNode* root) {
+            if (root == 0) return 0;
+            int a = dfs(root->left);
+            int b = dfs(root->right);
+            _max = max(_max, root->val);
+            ans = max(ans, max(0, a + root->val + b));
+            return max(0, max(a, b) + root->val);
+        };
+        dfs(root);
+        if (_max < 0) return _max;
+        return ans;
     }
 };
