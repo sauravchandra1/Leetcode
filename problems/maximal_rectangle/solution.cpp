@@ -1,58 +1,33 @@
 class Solution {
-    public:
-        int maxHistogram(vector < int > & heights) {
-            int n = heights.size(), maxArea = 0;
-            stack < pair < int, int >> s_nsl, s_nsr;
-            s_nsl.push({
-                INT_MIN,
-                -1
-            });
-            s_nsr.push({
-                INT_MIN,
-                n
-            });
-            vector < int > nsl(n), nsr(n);
-
-            for (int i = 0, j = n - 1; i < n && j >= 0; i++, j--) {
-                while (!s_nsl.empty() && heights[i] <= s_nsl.top().first)
-                    s_nsl.pop();
-                nsl[i] = abs(i - s_nsl.top().second);
-                s_nsl.push({
-                    heights[i],
-                    i
-                });
-
-                while (!s_nsr.empty() && heights[j] <= s_nsr.top().first)
-                    s_nsr.pop();
-                nsr[j] = abs(j - s_nsr.top().second);
-                s_nsr.push({
-                    heights[j],
-                    j
-                });
+public:
+    int maximalRectangle(vector<vector<char>>& matrix) {
+        int r = matrix.size(), c;
+        if (r) c = matrix[0].size();
+        else return 0;
+        auto getMax = [&](vector<int>& vec) {
+            vec.push_back(0);
+            stack<int> stk;
+            int ans = 0, tp;
+            for (int i = 0; i < vec.size(); i++) {
+                while (!stk.empty() && vec[stk.top()] > vec[i]) {
+                    tp = stk.top();
+                    stk.pop();
+                    ans = max(ans, vec[tp] * (stk.empty() ? i : i - stk.top() - 1));
+                }
+                stk.push(i);
             }
-
-            for (int i = 0; i < n; i++) {
-                maxArea = max(maxArea, (nsr[i] + nsl[i] - 1) * heights[i]);
+            return ans;
+        };
+        vector<vector<int>> vec(r, vector<int>(c));
+        for (int j = 0; j < c; j++) {
+            vec[0][j] = matrix[0][j] - '0';
+            for (int i = 1; i < r; i++) {
+                vec[i][j] = (matrix[i][j] == '0' ? 0 : vec[i - 1][j] + 1);
             }
-
-            return maxArea;
         }
-
-    int maximalRectangle(vector < vector < char >> & matrix) {
-        int m = matrix.size();
-        if (!m) return 0;
-        int n = matrix[0].size(), maxArea = 0;
-
-        vector < int > heights(n, 0);
-
-        for (int i = 0; i < m; i++) {
-            for (int j = 0; j < n; j++) {
-                if (matrix[i][j] == '0') heights[j] = 0;
-                else heights[j] += 1;
-            }
-            maxArea = max(maxArea, maxHistogram(heights));
-        }
-
-        return maxArea;
+        int ans = 0;
+        for (int i = 0; i < r; i++) 
+            ans = max(ans, getMax(vec[i]));
+        return ans;
     }
 };
