@@ -1,26 +1,26 @@
 class Solution {
-    public:
-        vector < int > findOrder(int numCourses, vector < vector < int >> & prerequisites) {
-            unordered_map < int, vector < int >> neighbors;
-            unordered_map < int, int > inDegrees;
-            queue < int > q;
-            vector < int > result;
-            for (auto & edge: prerequisites) {
-                inDegrees[edge[0]]++;
-                neighbors[edge[1]].push_back(edge[0]);
+public:
+    vector<int> findOrder(int len, vector<vector<int>>& pre) {
+        vector<vector<int>> vec(len);
+        for (auto& v : pre) 
+            vec[v[0]].push_back(v[1]);
+        vector<int> col(len), ans;
+        bool ok = false;
+        function<void(int)> dfs = [&](int source) {
+            if (col[source] == 2 || ok) return;
+            if (col[source] == 1) {
+                ok = true;
+                return;
             }
-            for (int i = 0; i < numCourses; i++)
-                if (!inDegrees.count(i))
-                    q.push(i);
-            while (!q.empty()) {
-                auto cur = q.front();
-                q.pop();
-                result.push_back(cur);
-                for (auto neighbor: neighbors[cur])
-                    if (--inDegrees[neighbor] == 0)
-                        q.push(neighbor);
+            col[source] = 1;
+            for (auto& node : vec[source]) {
+                if (col[node] != 2) dfs(node);
             }
-
-            return result.size() == numCourses ? result : vector < int > ();
-        }
+            col[source] = 2;
+            ans.push_back(source);
+        };
+        for (int i = 0; i < len; i++) dfs(i);
+        if (ok) return {};
+        return ans;
+    }
 };
