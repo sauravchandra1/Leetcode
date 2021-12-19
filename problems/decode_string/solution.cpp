@@ -1,37 +1,27 @@
 class Solution {
-    public:
-        string decodeString(string s) {
-            int size = s.size();
-            int i = 0;
-            string result;
-            stack < string > strStack;
-            stack < int > intStack;
-            while (i < size) {
-                if (isdigit(s[i])) {
-                    string numS;
-                    while (isdigit(s[i]))
-                        numS += s[i++];
-                    stringstream ss(numS);
-                    int num;
-                    ss >> num;
-                    intStack.push(num);
-                } else if (s[i] == '[') {
-                    strStack.push(result);
-                    result.clear();
-                    ++i;
-                } else if (isalpha(s[i]))
-                    result += s[i++];
-                else if (s[i] == ']') {
-                    string str(strStack.top());
-                    strStack.pop();
-                    int count = intStack.top();
-                    intStack.pop();
-                    for (int i = 0; i < count; ++i)
-                        str += result;
-                    result = str;
-                    ++i;
+public:
+    string decodeString(string s) {
+        int len = s.size();
+        int i = 0;
+        function<string()> dfs = [&]() {
+            if (i == len) return string("");
+            string str, tt;
+            int cnt = 0;
+            for (; i < len; i++) {
+                if (s[i] == '[') {
+                    i++;
+                    tt = dfs();
+                    while (cnt--) str += tt;
+                    cnt = 0;
+                }
+                else if (s[i] == ']') return str;
+                else {
+                    if (s[i] >= '0' && s[i] <= '9') cnt = cnt * 10 + (s[i] - '0');
+                    else str += s[i];
                 }
             }
-            return result;
-        }
+            return str;
+        };
+        return dfs();
+    }
 };
