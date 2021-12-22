@@ -1,51 +1,39 @@
-class Solution 
-{
+/**
+ * Definition for singly-linked list.
+ * struct ListNode {
+ *     int val;
+ *     ListNode *next;
+ *     ListNode() : val(0), next(nullptr) {}
+ *     ListNode(int x) : val(x), next(nullptr) {}
+ *     ListNode(int x, ListNode *next) : val(x), next(next) {}
+ * };
+ */
+class Solution {
 public:
-    void reorderList(ListNode* head)
-	{
-        if (head == nullptr		// case size 0
-			|| head->next == nullptr		// case size 1
-			|| head->next->next == nullptr)		// case size 2
-			return;
-			
-		int len = getLength(head);
-		ListNode* head1 = head, *head2 = head;
-		
-		for (int i = 0; i < len / 2; i++)
-			head2 = head2->next;
-			
-		bool stop = false;
-		reArrange(head1, head2, stop);
-	}
-
-	void reArrange(ListNode*& head1, ListNode*& head2, bool& stop) 
-	{
-		if (head2 == nullptr)
-			return;
-			
-		reArrange(head1, head2->next, stop);
-		
-		if (!stop && (head1 == head2 || head1->next == head2)) 
-		{
-			head2->next = nullptr;
-			stop = true;
-		}
-		if (!stop) 
-		{
-			head2->next = head1->next;
-			head1->next = head2;
-			head1 = head2->next;
-		}
-	}	
-
-	int getLength(const ListNode* head)
-	{
-		int length = 0;
-		while (head != nullptr)
-		{
-			length ++;
-			head = head->next;
-		}
-		return length;
-	}
+    void insertAfter(ListNode* curr, ListNode* node) {
+        ListNode* next = curr->next;
+        curr->next = node;
+        node->next = next;
+    }
+    void reorderList(ListNode* head) {
+        stack<ListNode*> stk;
+        ListNode* curr = head, *node = 0;
+        while (curr != 0) {
+            stk.push(curr);
+            curr = curr->next;
+        }
+        int len = stk.size();
+        if (len <= 2) return;
+        int n = (len & 1 ? len / 2 : (len - 1) / 2);
+        curr = head;
+        while (n--) {
+            node = stk.top();
+            stk.pop();
+            insertAfter(curr, node);
+            curr = node->next;
+        }
+        if (len & 1) curr->next = 0;
+        else curr->next->next = 0;
+        return;
+    }
 };
