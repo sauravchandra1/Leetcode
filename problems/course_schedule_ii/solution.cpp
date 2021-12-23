@@ -1,26 +1,29 @@
 class Solution {
 public:
-    vector<int> findOrder(int len, vector<vector<int>>& pre) {
-        vector<vector<int>> vec(len);
-        for (auto& v : pre) 
-            vec[v[0]].push_back(v[1]);
-        vector<int> col(len), ans;
-        bool ok = false;
+    vector<int> findOrder(int numCourses, vector<vector<int>>& prerequisites) {
+        vector<vector<int>> tree(numCourses);
+        for (auto& v : prerequisites) 
+            tree[v[0]].push_back(v[1]);
+        vector<int> color(numCourses), ans;
+        bool isFine = true;
         function<void(int)> dfs = [&](int source) {
-            if (col[source] == 2 || ok) return;
-            if (col[source] == 1) {
-                ok = true;
+            if (color[source] == 2) return;
+            else if (color[source] == 1) {
+                isFine = false;
                 return;
             }
-            col[source] = 1;
-            for (auto& node : vec[source]) {
-                if (col[node] != 2) dfs(node);
+            color[source] = 1;
+            for (auto& node : tree[source]) {
+                if (!isFine) return;
+                if (color[node] != 2) dfs(node);
             }
-            col[source] = 2;
             ans.push_back(source);
+            color[source] = 2;
         };
-        for (int i = 0; i < len; i++) dfs(i);
-        if (ok) return {};
+        for (int i = 0; i < numCourses; i++) {
+            dfs(i);
+            if (!isFine) return {};
+        }
         return ans;
     }
 };
