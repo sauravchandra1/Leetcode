@@ -12,29 +12,15 @@
 class Solution {
 public:
     int maxAncestorDiff(TreeNode* root) {
-        const int inf = 1e8;
-        int ans = -inf;
-        int res = -inf;
-        function<int(TreeNode*)> dfs = [&](TreeNode* root) {
-            if (root == NULL) return inf;
-            int l = dfs(root->left);
-            int r = dfs(root->right);
-            int _min = min(l, r);
-            if (_min == inf) return root->val;
-            ans = max(ans, abs(root->val - _min));
-            return min(root->val, _min);
+        if (root == 0) return 0;
+        int ans = 0;
+        function<void(TreeNode*, int, int)> dfs = [&](TreeNode* root, int _max, int _min) {
+            if (root == 0) return;
+            dfs(root->left, max(_max, root->val), min(_min, root->val));
+            dfs(root->right, max(_max, root->val), min(_min, root->val));
+            ans = max(ans, max(_max - root->val, root->val - _min));
         };
-        function<int(TreeNode*)> dfs2 = [&](TreeNode* root) {
-            if (root == NULL) return -inf;
-            int l = dfs2(root->left);
-            int r = dfs2(root->right);
-            int _max = max(l, r);
-            if (_max == -inf) return root->val;
-            res = max(res, abs(root->val - _max));
-            return max(_max, root->val);
-        };
-        dfs(root);
-        dfs2(root);
-        return max(ans, res);
+        dfs(root, 0, 1e6);
+        return ans;
     }
 };
