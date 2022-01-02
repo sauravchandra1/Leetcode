@@ -2,25 +2,11 @@ class Solution {
 public:
     int numPairsDivisibleBy60(vector<int>& time) {
         const int N = 60;
-        unordered_map<int, int> mp;
-        for (auto &v : time) {
-            v %= N;
-            mp[v]++;
-        }
-        int ans = 0;
-        for (auto v : mp) {
-            if (v.first == 0) {
-                ans += (v.second * (v.second - 1)) / 2;;
-                continue;
-            }
-            int r = N - v.first;
-            if (r == N / 2) {
-                ans += (v.second * (v.second - 1)) / 2;
-            }
-            if (r > v.first && mp.count(r) > 0) {
-                ans += v.second * mp[r];
-            }
-        }
+        vector<int> vec(N);
+        for (auto& v : time) vec[v % N]++;
+        long long ans = (vec[0] * (vec[0] - 1)) / 2;
+        ans += (vec[30] * (vec[30] - 1)) / 2;
+        for (int i = 1; i < N / 2; i++) ans += vec[i] * vec[N - i];
         return ans;
     }
 };
