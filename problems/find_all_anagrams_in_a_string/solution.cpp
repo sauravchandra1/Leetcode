@@ -1,42 +1,29 @@
 class Solution {
-    public:
-
-        bool isAnagram(unordered_map < char, int > a, unordered_map < char, int > b) {
-            if (a.size() != b.size()) return false;
-            for (auto c: a) {
-                if (b[c.first] > 0) {
-                    if (b[c.first] != c.second) return false;
-                } else return false;
-            }
-            return true;
+public:
+    const int N = 26;
+    bool isEqual(vector<int>& a, vector<int>& b) {
+        for (int i = 0; i < N; i++) 
+            if (a[i] != b[i]) 
+                return false;
+        return true;
+    }
+    vector<int> findAnagrams(string s, string p) {
+        if (p.size() > s.size()) return {};
+        vector<int> cnt_s(N), cnt_p(N);
+        for (auto& v : p) 
+            cnt_p[v - 'a']++;
+        for (int i = 0; i < p.size(); i++) 
+            cnt_s[s[i] - 'a']++;
+        vector<int> ans;
+        if (isEqual(cnt_s, cnt_p)) 
+            ans.push_back(0);
+        int l = 0, r = p.size();
+        while (r < s.size()) {
+            cnt_s[s[l++] - 'a']--;
+            cnt_s[s[r++] - 'a']++;
+            if (isEqual(cnt_s, cnt_p))
+                ans.push_back(l);
         }
-
-    vector < int > findAnagrams(string s, string p) {
-        int r = 0;
-        unordered_map < char, int > a, b;
-        for (r = 0; r < p.length(); ++r) {
-            a[s[r]]++;
-            b[p[r]]++;
-        }
-
-        r = 0;
-        int lengthOfP = p.length();
-        vector < int > indexes;
-        while (r < s.length()) {
-            if (isAnagram(a, b)) {
-                indexes.push_back(r);
-            }
-            a[s[r]]--;
-            if (a[s[r]] == 0) a.erase(s[r]);
-
-            if (lengthOfP < s.length()) {
-                a[s[lengthOfP]]++;
-            }
-
-            ++lengthOfP;
-            ++r;
-        }
-
-        return indexes;
+        return ans;
     }
 };
